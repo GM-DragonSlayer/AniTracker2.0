@@ -5,12 +5,12 @@ const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-// Cookie helper functions (expires in 1 hour)
-const setCookie = (name, value, hours = 1) => {
+// Cookie helper functions (expires in 7 days)
+const setCookie = (name, value, days = 7) => {
   let expires = "";
-  if (hours) {
+  if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     expires = "; expires=" + date.toUTCString();
   }
   document.cookie = name + "=" + (value || "") + expires + "; path=/";
@@ -33,36 +33,50 @@ const eraseCookie = (name) => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Restore session from cookie on initial app load
   useEffect(() => {
-    const savedEmail = getCookie('animetracker_user_email');
-    if (savedEmail) {
-      api.login(savedEmail, '')
-        .then(userData => {
+    const initSession = async () => {
+      const savedEmail = getCookie('animetracker_user_email');
+      if (savedEmail) {
+        try {
+          // THE FIX: We bypass the POST /login (which requires a password) 
+          // and instead hit the GET endpoint directly to fetch the user by email!
+          const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/users';
+          const response = await fetch(`${baseUrl}/${savedEmail}`);
+          
+          if (!response.ok) throw new Error("Session expired");
+          
+          const userData = await response.json();
           if (userData) setUser(userData);
-        })
-        .catch(() => {
+        } catch (err) {
+          console.error("Session restore failed:", err);
           eraseCookie('animetracker_user_email');
-        });
-    }
+        }
+      }
+      setIsAuthLoading(false);
+    };
+
+    initSession();
   }, []);
 
   const login = async (email, password) => {
     const userData = await api.login(email, password);
     setUser(userData);
-    setCookie('animetracker_user_email', email, 1); // 1 hour expiration
+    setCookie('animetracker_user_email', email, 7); 
   };
 
   const signup = async (email, userName, password) => {
     const userData = await api.signup(email, userName, password);
     setUser(userData);
-    setCookie('animetracker_user_email', email, 1); // 1 hour expiration
+    setCookie('animetracker_user_email', email, 7); 
   };
 
   const logout = () => {
     setUser(null);
     eraseCookie('animetracker_user_email');
+    localStorage.removeItem('animetracker_view'); 
   };
 
   const addAnime = async (animeData) => {
@@ -78,7 +92,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, addAnime, removeAnime }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addAnime, removeAnime, isAuthLoading }}>
       {children}
     </AuthContext.Provider>
   );
