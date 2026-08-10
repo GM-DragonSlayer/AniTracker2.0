@@ -88,7 +88,8 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
         titleEnglish: details.titleEnglish,
         poster: details.poster,
         status: newStatus,
-        watchedEpisodes: Array.from(watchedEpisodes)
+        watchedEpisodes: Array.from(watchedEpisodes),
+        totalEpisodes: totalEps
       });
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -114,7 +115,8 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
         titleEnglish: details.titleEnglish,
         poster: details.poster,
         status: newStatus,
-        watchedEpisodes: Array.from(updated)
+        watchedEpisodes: Array.from(updated),
+        totalEpisodes: totalEps
       });
     } catch (err) {
       console.error("Failed to update episodes:", err);

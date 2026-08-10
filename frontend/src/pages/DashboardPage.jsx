@@ -4,7 +4,7 @@ import DashboardCard from '../components/DashboardCard';
 import AnimeDetailsModal from '../components/AnimeDetailsModal';
 
 export default function DashboardPage() {
-  const { user, addAnime } = useAuth();
+  const { user, addAnime, removeAnime } = useAuth();
   
   const [filter, setFilter] = useState('ALL');
   const [selectedAnimeId, setSelectedAnimeId] = useState(null);
@@ -104,6 +104,7 @@ export default function DashboardPage() {
               preferEnglish={preferEnglish}
               onCardClick={() => setSelectedAnimeId(anime.id)}
               onUpdateProgress={addAnime} /* Passed directly to handle +1 updates! */
+              onRemove={removeAnime}
             />
           ))}
         </div>

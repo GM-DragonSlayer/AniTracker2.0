@@ -80,7 +80,8 @@ export const api = {
       id: parseInt(anime.id),
       titleRomaji: anime.attributes.canonicalTitle,
       titleEnglish: anime.attributes.titles?.en || anime.attributes.titles?.en_us || anime.attributes.canonicalTitle,
-      poster: anime.attributes.posterImage?.large || anime.attributes.posterImage?.original
+      poster: anime.attributes.posterImage?.large || anime.attributes.posterImage?.original,
+      totalEpisodes: anime.attributes.episodeCount || 0
     }));
   },
   getAnimeDetails: async (animeId) => {
