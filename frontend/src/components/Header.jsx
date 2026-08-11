@@ -84,8 +84,8 @@ export default function Header({ onSignInClick, onViewChange, currentView, theme
               className="absolute top-full right-0 mt-3 p-5 rounded-2xl w-60 z-[100] flex flex-col shadow-2xl border border-black/10 dark:border-white/10 origin-top-right animate-in fade-in scale-95 duration-200"
               style={{ 
                 background: 'var(--nav-bg)', 
-                backdropFilter: 'blur(20px)', 
-                WebkitBackdropFilter: 'blur(20px)' 
+                backdropFilter: 'blur(40px)', 
+                WebkitBackdropFilter: 'blur(40px)' 
               }}
             >
               {/* TOP HEADER SECTION */}
