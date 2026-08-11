@@ -82,14 +82,16 @@ export default function ExplorePage() {
         </form>
       </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-          <h3 className="text-xl md:text-2xl font-bold theme-text-muted">
+      {}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 w-full">
+          <h3 className="text-xl md:text-2xl font-bold theme-text-muted truncate w-full pr-2">
             {submittedQuery ? `Search Results for "${submittedQuery}"` : 'Popular Anime'}
             {activeFilters.category && <span className="ml-2 text-sky-500 text-lg capitalize font-bold">({activeFilters.category})</span>}
           </h3>
 
-          <div className="flex items-center gap-3">
+          {}
+          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3">
             <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-black/5 dark:border-white/5 shadow-inner">
                <button onClick={() => setPreferEnglish(false)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!preferEnglish ? 'bg-sky-500 text-white shadow-md' : 'theme-text-muted hover:theme-text'}`}>JP</button>
                <button onClick={() => setPreferEnglish(true)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${preferEnglish ? 'bg-sky-500 text-white shadow-md' : 'theme-text-muted hover:theme-text'}`}>EN</button>
@@ -137,6 +139,7 @@ export default function ExplorePage() {
           </div>
         </div>
         
+        {}
         {loading ? (
           <div className="flex-1 flex justify-center items-center min-h-[400px]">
             <div className="w-12 h-12 border-4 theme-spinner rounded-full animate-spin"></div>
@@ -168,6 +171,7 @@ export default function ExplorePage() {
         )}
       </div>
 
+      {}
       {selectedAnimeId && (
         <AnimeDetailsModal 
           animeId={selectedAnimeId} 

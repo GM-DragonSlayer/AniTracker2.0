@@ -139,10 +139,9 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        // Adjusted padding top (pt-12 md:pt-14) to clear space for the close button
         className="glass-card rounded-[2.5rem] pt-12 pb-6 px-6 md:pt-14 md:pb-10 md:px-10 w-full max-w-4xl max-h-[85vh] overflow-y-auto relative custom-scrollbar flex flex-col gap-8 shadow-2xl border border-white/10"
       >
-        {/* Close Button - Pushed to the absolute top-right edge with less inset */}
+        {/* Close Button */}
         <button 
           onClick={onClose} 
           className="absolute top-2 right-2 md:top-3 md:right-3 w-10 h-10 flex items-center justify-center rounded-full bg-slate-500/10 hover:bg-red-500/20 theme-text-muted hover:text-red-500 transition-all z-10"
@@ -153,12 +152,11 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
           </svg>
         </button>
 
-        {}
         {/* TOP SECTION: Poster & Metadata */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-start">
           
-          {/* Poster Column */}
-          <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden relative bg-black/5 shadow-inner">
+          {/* Poster Column - Constrained on mobile */}
+          <div className="w-48 sm:w-56 md:w-full mx-auto md:mx-0 aspect-[2/3] rounded-2xl overflow-hidden relative bg-black/5 shadow-inner">
             {details.poster ? (
               <img src={details.poster} alt={displayTitle} className="w-full h-full object-cover" />
             ) : (
@@ -174,16 +172,25 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
                   {displayTitle}
                 </h2>
                 
-                {/* Status Selector */}
-                <select 
-                  value={status} 
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="structural-input px-4 py-2.5 rounded-xl text-sm font-bold outline-none cursor-pointer flex-shrink-0"
-                >
-                  <option value="WATCHLIST">Watchlist</option>
-                  <option value="WATCHING">Watching</option>
-                  <option value="WATCHED">Watched</option>
-                </select>
+                {/* Status Selector Wrapper */}
+                <div className="relative flex-shrink-0">
+                  <select 
+                    value={status} 
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    className="structural-input px-4 py-2.5 pr-12 rounded-xl text-sm font-bold outline-none cursor-pointer appearance-none w-full"
+                  >
+                    <option value="WATCHLIST">Watchlist</option>
+                    <option value="WATCHING">Watching</option>
+                    <option value="WATCHED">Watched</option>
+                  </select>
+                  
+                  {/* Explicit Arrow Icon */}
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none theme-text-muted">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               {/* Description / Synopsis */}
@@ -210,18 +217,20 @@ export default function AnimeDetailsModal({ animeId, onClose, preferEnglish }) {
           </div>
         </div>
 
-        {}
         {/* BOTTOM SECTION: Episode List & Pagination */}
         <div className="flex flex-col gap-4 pt-4 border-t border-black/10 dark:border-white/10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <h3 className="text-xl font-bold theme-text">Episode List</h3>
             
-            {/* Pagination Range Selector for long series */}
+            {/* Pagination Range Selector - Also added right padding for consistency */}
             {pageOptions.length > 0 && (
               <select
                 value={currentOffset}
                 onChange={(e) => handlePageChange(Number(e.target.value))}
-                className="structural-input px-4 py-2 rounded-xl text-xs font-bold outline-none cursor-pointer"
+                className="structural-input px-4 py-2 pr-8 rounded-xl text-xs font-bold outline-none cursor-pointer appearance-none bg-no-repeat bg-[length:0.75rem_0.75rem] bg-[right_0.75rem_center]"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`
+                }}
               >
                 {pageOptions.map(opt => (
                   <option key={opt.offset} value={opt.offset}>

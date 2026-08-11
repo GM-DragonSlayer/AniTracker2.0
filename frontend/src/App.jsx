@@ -15,12 +15,20 @@ function AppLayout() {
     return localStorage.getItem('animetracker_view') || 'landing';
   }); 
   
-  const [theme, setTheme] = useState('light'); 
+  // THE FIX: Remember the user's selected theme!
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('animetracker_theme') || 'light';
+  });
 
   // Save the view whenever they navigate between Explore/Dashboard
   useEffect(() => {
     localStorage.setItem('animetracker_view', currentView);
   }, [currentView]);
+
+  // Save the theme whenever they change it from the dropdown
+  useEffect(() => {
+    localStorage.setItem('animetracker_theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     // ONLY redirect if we are completely finished checking the cookie

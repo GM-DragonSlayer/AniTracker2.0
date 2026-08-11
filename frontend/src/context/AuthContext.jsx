@@ -41,9 +41,11 @@ export const AuthProvider = ({ children }) => {
       const savedEmail = getCookie('animetracker_user_email');
       if (savedEmail) {
         try {
-          // THE FIX: We bypass the POST /login (which requires a password) 
-          // and instead hit the GET endpoint directly to fetch the user by email!
-          const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/users';
+          // FOOLPROOF URL CONFIGURATION:
+          let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/users';
+          if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+          if (!baseUrl.endsWith('/api/users')) baseUrl += '/api/users';
+          
           const response = await fetch(`${baseUrl}/${savedEmail}`);
           
           if (!response.ok) throw new Error("Session expired");
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     eraseCookie('animetracker_user_email');
     localStorage.removeItem('animetracker_view'); 
+    localStorage.removeItem('animetracker_theme'); // Clears the theme on logout
   };
 
   const addAnime = async (animeData) => {
