@@ -13,6 +13,10 @@ public class Service {
     private userRepo repo;
 
     public User createUser(User user){
+        // Prevent overwriting existing user data by checking if email already exists
+        if (repo.existsById(user.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
         return repo.save(user);
     }
 
@@ -37,7 +41,6 @@ public class Service {
                 target.setWatchedEpisodes(incomingAnime.getWatchedEpisodes());
                 target.setEpisodesWatched(incomingAnime.getWatchedEpisodes().size());
             }
-            // THE CHANGE: Update total episodes for an existing anime
             if (incomingAnime.getTotalEpisodes() > 0) {
                 target.setTotalEpisodes(incomingAnime.getTotalEpisodes());
             }
@@ -48,16 +51,14 @@ public class Service {
             if (incomingAnime.getWatchedEpisodes() != null) {
                 incomingAnime.setEpisodesWatched(incomingAnime.getWatchedEpisodes().size());
             }
-            // THE CHANGE: Save total episodes when adding a brand new anime
             if (incomingAnime.getTotalEpisodes() > 0) {
-                incomingAnime.setTotalEpisodes(incomingAnime.getTotalEpisodes()); // While redundant for a direct save, this ensures safety if defaults change
+                incomingAnime.setTotalEpisodes(incomingAnime.getTotalEpisodes());
             }
             user.getAnimeList().add(incomingAnime);
         }
 
         return repo.save(user);
     }
-
 
     public User updateEpisodesWatched(String email, int animeId, int episodes) {
         User user = getUserByEmail(email);

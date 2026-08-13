@@ -7,11 +7,16 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, userName, password })
     });
-    if (!response.ok) throw new Error('Failed to sign up.');
+    
+    if (!response.ok) {
+      if (response.status === 409 || response.status === 500) {
+        throw new Error('An account with this email already exists.');
+      }
+      throw new Error('Failed to sign up.');
+    }
     return await response.json();
   },
   login: async (email, password) => {
-    // UPDATED: Now sends a secure POST request with the password in the body
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -91,7 +96,6 @@ export const api = {
     
     let episodeCount = attr.episodeCount || 0;
     
-    // Fallback to AniList GraphQL for ongoing/unknown episode counts
     if (!episodeCount || episodeCount === 0) {
       try {
         const query = `
@@ -106,12 +110,11 @@ export const api = {
         `;
 
         const variables = {
-          // Clean the title slightly to improve AniList search accuracy
           search: attr.canonicalTitle.replace(/:.*$/, '').trim() 
         };
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
 
         const anilistRes = await fetch('https://graphql.anilist.co', {
           method: 'POST',
@@ -131,10 +134,8 @@ export const api = {
           
           if (media) {
             if (media.nextAiringEpisode && media.nextAiringEpisode.episode) {
-              // Exact ongoing math: Next episode minus 1
               episodeCount = media.nextAiringEpisode.episode - 1;
             } else if (media.episodes) {
-              // Fallback to their total episode count if available
               episodeCount = media.episodes;
             }
           }
@@ -144,7 +145,6 @@ export const api = {
       }
     }
     
-    // Fetch first page of episodes (up to 20)
     const epRes = await fetch(`https://kitsu.io/api/edge/anime/${animeId}/episodes?page[limit]=20&page[offset]=0`);
     const epData = await epRes.json();
     
